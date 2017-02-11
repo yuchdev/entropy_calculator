@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(shannon_entropy CXX)
+project(entropy_calculator CXX)
 
 set(BOOST_MIN_VERSION "1.61.0")
 set(Boost_ADDITIONAL_VERSIONS "1.61.0" "1.61")
@@ -26,6 +26,6 @@ elseif(${WIN32})
 endif()
 
 add_subdirectory(entropy)
-add_subdirectory(entropy_util)
+add_subdirectory(entropy_calculator)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)

@@ -2,9 +2,9 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
-#include <entropy_util/random_distributions.h>
 #include <entropy/shannon_entropy.h>
-#include <entropy_util/command_line_parser.h>
+#include <entropy_calculator/random_distributions.h>
+#include <entropy_calculator/command_line_parser.h>
 
 using namespace std;
 using namespace entropy;

@@ -1,4 +1,4 @@
-#include <entropy_util/random_distributions.h>
+#include <entropy_calculator/random_distributions.h>
 #include <iostream>
 #include <random>
 #include <functional>

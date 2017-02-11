@@ -1,4 +1,4 @@
-#include <entropy_util//command_line_parser.h>
+#include <entropy_calculator/command_line_parser.h>
 
 #include <string>
 #include <list>

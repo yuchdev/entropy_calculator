@@ -68,7 +68,7 @@ ShannonEncryptionChecker::information_entropy_estimation(double entropy, size_t 
     if (entropy > 6.0) {
         return Binary;
     }
-    if (entropy > 0. && entropy <= 6.0) {
+    if (entropy >= 0. && entropy <= 6.0) {
         return Plain;
     }
     // should not be here, entropy calculation error

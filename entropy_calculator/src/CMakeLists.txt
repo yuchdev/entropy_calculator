@@ -1,4 +1,4 @@
-set(TARGET entropy_util)
+set(TARGET entropy_calculator)
 
 find_package(Boost ${BOOST_MIN_VERSION} COMPONENTS program_options REQUIRED)
 
