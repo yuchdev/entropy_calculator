@@ -5,6 +5,8 @@
 using namespace entropy;
 using namespace std;
 
+bool entropy::ShannonEncryptionChecker::interrupt_all_ = false;
+
 bool entropy::ShannonEncryptionChecker::load_uint8_codecvt_;
 
 std::map<ShannonEncryptionChecker::InformationEntropyEstimation, std::string> 
@@ -36,6 +38,11 @@ double entropy::ShannonEncryptionChecker::get_file_entropy(const std::string& fi
     size_t file_size = get_file_size(file_path);
     std::vector<double> byte_probabilities = read_file_bytes_probabilities(file_path, file_size);
     return shannon_entropy(byte_probabilities.begin(), byte_probabilities.end());
+}
+
+void ShannonEncryptionChecker::interrupt()
+{
+    interrupt_all_ = true;
 }
 
 std::string ShannonEncryptionChecker::get_information_description(InformationEntropyEstimation ent) const
@@ -75,6 +82,8 @@ ShannonEncryptionChecker::information_entropy_estimation(double entropy, size_t 
     assert(false);
     return Unknown;
 }
+
+#if 0
 
 std::vector<double> ShannonEncryptionChecker::read_file_bytes_probabilities(const std::string& file_path, size_t file_size) const
 {
@@ -120,6 +129,72 @@ std::vector<double> ShannonEncryptionChecker::read_stream_probabilities(const ui
     return std::move(bytes_frequencies);
 }
 
+#else
+
+std::vector<double> ShannonEncryptionChecker::read_file_bytes_probabilities(const std::string& file_path, size_t file_size) const
+{
+    // probability of every byte of zero-sized file is 0
+    if (0 == file_size) {
+        return std::vector<double>(256);
+    }
+
+    uint8_t read_ahead_buffer[MAX_BUFFER_SIZE];
+
+    std::vector<size_t> bytes_distribution(256);
+    std::vector<double> bytes_frequencies(256);
+    std::basic_ifstream<uint8_t, std::char_traits<uint8_t>> file(file_path, std::ios::in | std::ios::binary);
+    file.rdbuf()->pubsetbuf(read_ahead_buffer, MAX_BUFFER_SIZE);
+
+    uint8_t b{};
+    while (!file.eof()) {
+
+        if (interrupt_all_) {
+            return std::vector<double>{};
+        }
+
+        file.read(reinterpret_cast<uint8_t*>(&b), sizeof(uint8_t));
+        ++bytes_distribution[b];
+    }
+
+    for (size_t i = 0; i != 256; ++i) {
+        if (interrupt_all_) {
+            return std::vector<double>{};
+        }
+
+        bytes_frequencies[i] = static_cast<double>(bytes_distribution[i]) / file_size;
+    }
+
+    return std::move(bytes_frequencies);
+}
+
+std::vector<double> ShannonEncryptionChecker::read_stream_probabilities(const uint8_t* sequence_start, size_t sequence_size) const
+{
+    if (0 == sequence_size) {
+        return std::move(std::vector<double>(256));
+    }
+
+    std::vector<size_t> bytes_distribution(256);
+    std::vector<double> bytes_frequencies(256);
+
+    for (size_t i = 0; i < sequence_size; ++i) {
+        if (interrupt_all_) {
+            return std::vector<double>{};
+        }
+        ++bytes_distribution[sequence_start[i]];
+    }
+
+    for (size_t i = 0; i != 256; ++i) {
+        if (interrupt_all_) {
+            return std::vector<double>{};
+        }
+
+        bytes_frequencies[i] = static_cast<double>(bytes_distribution[i]) / sequence_size;
+    }
+
+    return std::move(bytes_frequencies);
+}
+
+#endif
 double ShannonEncryptionChecker::estimated_epsilon(size_t sample_size) const
 {
     // Note: numbers based on very approximate estimations (several test calculations)

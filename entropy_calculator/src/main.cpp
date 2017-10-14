@@ -2,19 +2,37 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <chrono>
 #include <entropy/shannon_entropy.h>
 #include <entropy_calculator/random_distributions.h>
 #include <entropy_calculator/command_line_parser.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <Windows.h>
+#endif
+
 using namespace std;
 using namespace entropy;
 using binary_file = std::basic_ifstream<uint8_t, std::char_traits<uint8_t>>;
+
 
 static CommandLineParams& get_params()
 {
     static CommandLineParams p;
     return p;
 }
+
+#if defined(_WIN32) || defined(_WIN64)
+
+BOOL WINAPI ctrl_handler(DWORD ctrl_type)
+{
+    // Ctrl Event types
+    // https://msdn.microsoft.com/en-us/library/ms683242(v=vs.85).aspx
+    ShannonEncryptionChecker::interrupt();
+    return TRUE;
+}
+
+#endif
 
 void usage_exit()
 {
@@ -32,16 +50,21 @@ void print_version_exit()
 void calculate_file_entropy(const std::string& filename) 
 {
     std::cout << "Please patience, entropy calculation on big files takes a while...\n";
+    auto start = chrono::steady_clock::now();
+    
     ShannonEncryptionChecker shannon;
     size_t file_size = ShannonEncryptionChecker::get_file_size(filename);
     double entropy = shannon.get_file_entropy(filename);
     size_t min_compressed = shannon.min_compressed_size(entropy, file_size);
     ShannonEncryptionChecker::InformationEntropyEstimation entropy_estimation = shannon.information_entropy_estimation(entropy, file_size);
+    auto end = chrono::steady_clock::now();
     std::string description = shannon.get_information_description(entropy_estimation);
 
+    auto diff = end - start;
     std::cout << "File name: " << filename << '\n';
     std::cout << "File size = " << file_size << " bytes\n";
     std::cout << "Entropy = " << std::setprecision(16) << entropy << '\n';
+    std::cout << "Time = " << static_cast<int>(chrono::duration<double, milli>(diff).count()) << " ms" << '\n';
     std::cout << "Information entropy estimation: " << description << '\n';
     std::cout << "Min possible file size assuming max theoretical compression efficiency: " << min_compressed << " bytes\n";
 }
