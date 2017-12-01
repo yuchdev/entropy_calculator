@@ -15,7 +15,6 @@ using namespace std;
 using namespace entropy;
 using binary_file = std::basic_ifstream<uint8_t, std::char_traits<uint8_t>>;
 
-
 static CommandLineParams& get_params()
 {
     static CommandLineParams p;
