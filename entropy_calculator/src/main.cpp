@@ -20,6 +20,8 @@ using binary_file = std::basic_ifstream<uint8_t, std::char_traits<uint8_t>>;
 struct progress_cb 
 {
     progress_cb() = default;
+    progress_cb(const progress_cb&) = delete;
+    progress_cb& operator=(const progress_cb&) = delete;
 
     void init(unsigned long op_count)
     {
@@ -37,7 +39,7 @@ struct progress_cb
     }
 
     uintmax_t count;
-    std::shared_ptr<boost::progress_display> progress_bar;
+    std::unique_ptr<boost::progress_display> progress_bar;
 };
 
 
@@ -49,7 +51,7 @@ static progress_cb& get_progress()
 
 void progress_callback(uintmax_t iteration)
 {
-    auto progress = get_progress();
+    auto& progress = get_progress();
     progress();
 }
 
