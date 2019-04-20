@@ -24,6 +24,34 @@ def shennon_entropy(frequency_list):
     return -ent
 
 
+# Print iterations progress
+def progress_bar(iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '*'):
+    """
+    Call in a loop to create terminal progress bar
+    Usage example:
+    # Set 0%
+    progress_bar(0, l, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    while some():
+        progress_bar(i + 1, l, prefix = 'Progress:', suffix = 'Complete', length = 50)
+
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
+
+
 # Shannon entropy
 if __name__ == '__main__':
 
@@ -41,26 +69,20 @@ if __name__ == '__main__':
     with open(file_name, "rb") as f:
         read_byte = f.read(1)
         counter = 0
-        mb_counter = 0
+        percent_counter = 0
         while read_byte != b"":
             # Do stuff with byte
             value = struct.unpack('B', read_byte)[0]
             bytes_list[value] += 1
             counter += 1
-            if counter == 1048576:
+            if counter > percent_size:
                 counter = 0
-                mb_counter += 1
-                print('{0} MB read'.format(mb_counter))
+                percent_counter += 1
+                print('{0} % read'.format(percent_counter))
             read_byte = f.read(1)
-
-    print('Bytes list:')
-    print(bytes_list)
 
     # divide by file size
     frequency_list = [float(elem)/file_size for elem in bytes_list]
-
-    print('Frequency list:')
-    print(frequency_list)
 
     entropy = shennon_entropy(frequency_list)
     print('Shannon entropy (min bits per byte-character): {0}'.format(entropy))
