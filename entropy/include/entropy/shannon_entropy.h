@@ -72,6 +72,7 @@ public:
         EntropyLevelSize
     };
 
+    /// @brief Callback type for calling on all iterations
     using callback_t = void(*)(uintmax_t);
 
     /// @brief Set facet for unsigned char (boost binary reading twice)
