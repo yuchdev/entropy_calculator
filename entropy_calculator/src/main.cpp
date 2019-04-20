@@ -80,7 +80,7 @@ void usage_exit()
 
 void print_version_exit()
 {
-    cout << "0.0.2" << endl;
+    cout << "0.0.3" << endl;
     exit(EXIT_SUCCESS);
 }
 
