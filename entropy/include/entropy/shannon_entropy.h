@@ -33,6 +33,33 @@ double shannon_entropy(T first, T last)
     return -entropy;
 }
 
+template <typename T, typename CallbackObj>
+double shannon_entropy(T first, T last, CallbackObj& callback)
+{
+    size_t frequencies_count{};
+    double entropy{};
+    
+    uintmax_t counter{};
+    uintmax_t data_size = std::distance(first, last);
+    callback.init(data_size);
+
+    std::for_each(first, last, [&entropy, &frequencies_count, &callback](auto item) mutable {
+
+        if (0. == item) return;
+        double fp_item = static_cast<double>(item);
+        entropy += fp_item * log2(fp_item);
+        ++frequencies_count;
+    });
+
+    if (frequencies_count > 256) {
+        assert(false);
+        return -1.0;
+    }
+
+    return -entropy;
+}
+
+
 /// @brief Detect whether some sequence (byte, block, memory, disk) is encrypted or highly compressed
 class ShannonEncryptionChecker {
 public:
@@ -45,6 +72,8 @@ public:
         EntropyLevelSize
     };
 
+    using callback_t = void(*)(uintmax_t);
+
     /// @brief Set facet for unsigned char (boost binary reading twice)
     ShannonEncryptionChecker();
 
@@ -55,6 +84,9 @@ public:
 
     /// @brief Detect whether the bytes sequence (e.g. memory) is encrypted
     double get_sequence_entropy(const uint8_t* sequence_start, size_t sequence_size) const;
+    
+    /// @brief Set callback function, accepting value of the bytes counter
+    void set_callback(callback_t callback);
 
     /// @brief Get information encryption level using provided entropy and sequence size
     InformationEntropyEstimation information_entropy_estimation(double entropy, size_t sequence_size) const;
@@ -77,8 +109,11 @@ private:
     /// do not make it atomic so that avoid cache ping-pong
     static bool interrupt_all_;
 
+    /// Callback function called on every iteration
+    callback_t callback_{};
+
     /// Calculate probabilities to meet some byte in the file
-    std::vector<double> read_file_bytes_probabilities(const std::string& file_path, size_t file_size) const;
+    std::vector<double> read_file_probabilities(const std::string& file_path, size_t file_size) const;
 
     /// Calculate probabilities to meet some byte in the sequence
     std::vector<double> read_stream_probabilities(const uint8_t* sequence_start, size_t sequence_size) const;

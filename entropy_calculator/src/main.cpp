@@ -1,11 +1,13 @@
+#include <entropy/shannon_entropy.h>
+#include <entropy_calculator/random_distributions.h>
+#include <entropy_calculator/command_line_parser.h>
+
+#include <boost/progress.hpp>
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <iomanip>
 #include <chrono>
-#include <entropy/shannon_entropy.h>
-#include <entropy_calculator/random_distributions.h>
-#include <entropy_calculator/command_line_parser.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <Windows.h>
@@ -14,6 +16,42 @@
 using namespace std;
 using namespace entropy;
 using binary_file = std::basic_ifstream<uint8_t, std::char_traits<uint8_t>>;
+
+struct progress_cb 
+{
+    progress_cb() = default;
+
+    void init(unsigned long op_count)
+    {
+        progress_bar = std::make_unique<boost::progress_display>(
+            static_cast<unsigned long>(op_count), 
+            std::cout, 
+            "\n%\t ", 
+            "\t ", 
+            "Complete:");
+    }
+
+    void operator()()
+    {
+        ++(*progress_bar);
+    }
+
+    uintmax_t count;
+    std::shared_ptr<boost::progress_display> progress_bar;
+};
+
+
+static progress_cb& get_progress()
+{
+    static progress_cb pd;
+    return pd;
+}
+
+void progress_callback(uintmax_t iteration)
+{
+    auto progress = get_progress();
+    progress();
+}
 
 static CommandLineParams& get_params()
 {
@@ -50,12 +88,18 @@ void calculate_file_entropy(const std::string& filename)
 {
     std::cout << "Please patience, entropy calculation on big files takes a while...\n";
     auto start = chrono::steady_clock::now();
-    
+
     ShannonEncryptionChecker shannon;
+    
     size_t file_size = ShannonEncryptionChecker::get_file_size(filename);
+
+    get_progress().init(file_size);
+    shannon.set_callback(&progress_callback);
+
     double entropy = shannon.get_file_entropy(filename);
     size_t min_compressed = shannon.min_compressed_size(entropy, file_size);
-    ShannonEncryptionChecker::InformationEntropyEstimation entropy_estimation = shannon.information_entropy_estimation(entropy, file_size);
+    ShannonEncryptionChecker::InformationEntropyEstimation entropy_estimation = 
+        shannon.information_entropy_estimation(entropy, file_size);
     auto end = chrono::steady_clock::now();
     std::string description = shannon.get_information_description(entropy_estimation);
 
@@ -83,7 +127,7 @@ void calculate_sequence_entropy(const std::vector<uint8_t>& sequence)
     std::cout << "Min possible file size assuming max theoretical compression efficiency: " << min_compressed << " bytes\n";
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 
     setlocale(0, "");
 
