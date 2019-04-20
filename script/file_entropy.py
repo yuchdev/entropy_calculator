@@ -16,9 +16,15 @@ import itertools
 import struct
 
 
-def shannon_entropy(frequency_list):
+def shannon_entropy(frequency_array):
+    """
+    :param frequency_array: list of 255 elements, every of each is a frequency
+    of a byte with that number has been met in a measured sample. For example,
+    frequency_array[0] = 0.5 means 50% of bytes in the file are 0x00
+    :return: entropy from 0.0 to 8.0, where 0.0 is order, 8.0 is chaos
+    """
     ent = 0.0
-    for freq in frequency_list:
+    for freq in frequency_array:
         if freq > 0:
             ent = ent + freq * math.log(freq, 2)
     return -ent
@@ -80,7 +86,7 @@ if __name__ == '__main__':
     file_size = os.stat(file_name).st_size
     print('File size in bytes: {0}'.format(file_size))
 
-    progress_bar = ProgressBar(file_size, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    progress_bar = ProgressBar(file_size, prefix='Progress:', suffix='Complete', length=50)
 
     bytes_list = list(itertools.repeat(0, 256))
     with open(file_name, "rb") as f:
