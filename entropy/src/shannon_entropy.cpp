@@ -83,54 +83,6 @@ ShannonEncryptionChecker::information_entropy_estimation(double entropy, size_t 
     return Unknown;
 }
 
-#if 0
-
-std::vector<double> ShannonEncryptionChecker::read_file_bytes_probabilities(const std::string& file_path, size_t file_size) const
-{
-    // probability of every byte of zero-sized file is 0
-    if (0 == file_size) {
-        return std::vector<double>(256);
-    }
-
-    std::vector<size_t> bytes_distribution(256);
-    std::basic_ifstream<uint8_t, std::char_traits<uint8_t>> is(file_path, std::ios::binary);
-
-    std::for_each(std::istreambuf_iterator<uint8_t>(is),
-        std::istreambuf_iterator<uint8_t>(), [&](uint8_t b) mutable {
-        ++bytes_distribution[b];
-    });
-
-    std::vector<double> bytes_frequencies(256);
-    std::transform(bytes_distribution.begin(), bytes_distribution.end(), bytes_frequencies.begin(),
-        [&file_size](size_t item) {
-        return static_cast<double>(item) / file_size;
-    });
-    return std::move(bytes_frequencies);
-}
-
-std::vector<double> ShannonEncryptionChecker::read_stream_probabilities(const uint8_t* sequence_start, size_t sequence_size) const
-{
-    std::vector<size_t> bytes_distribution(256);
-
-    if (0 == sequence_size) {
-        return std::move(std::vector<double>(256));
-    }
-
-    std::vector<double> bytes_frequencies(256);
-
-    std::for_each(sequence_start, sequence_start + sequence_size, [&](uint8_t b) mutable {
-        ++bytes_distribution[b];
-    });
-
-    std::transform(bytes_distribution.begin(), bytes_distribution.end(), bytes_frequencies.begin(),
-        [&sequence_size](size_t item) {
-        return static_cast<double>(item) / sequence_size;
-    });
-    return std::move(bytes_frequencies);
-}
-
-#else
-
 std::vector<double> ShannonEncryptionChecker::read_file_bytes_probabilities(const std::string& file_path, size_t file_size) const
 {
     // probability of every byte of zero-sized file is 0
@@ -194,7 +146,6 @@ std::vector<double> ShannonEncryptionChecker::read_stream_probabilities(const ui
     return std::move(bytes_frequencies);
 }
 
-#endif
 double ShannonEncryptionChecker::estimated_epsilon(size_t sample_size) const
 {
     // Note: numbers based on very approximate estimations (several test calculations)
