@@ -17,11 +17,11 @@ using namespace std;
 using namespace entropy;
 using binary_file = std::basic_ifstream<uint8_t, std::char_traits<uint8_t>>;
 
-struct progress_cb 
+struct ProgressCallback
 {
-    progress_cb() = default;
-    progress_cb(const progress_cb&) = delete;
-    progress_cb& operator=(const progress_cb&) = delete;
+    ProgressCallback() = default;
+    ProgressCallback(const ProgressCallback&) = delete;
+    ProgressCallback& operator=(const ProgressCallback&) = delete;
 
     void init(unsigned long op_count)
     {
@@ -43,9 +43,9 @@ struct progress_cb
 };
 
 
-static progress_cb& get_progress()
+static ProgressCallback& get_progress()
 {
-    static progress_cb pd;
+    static ProgressCallback pd;
     return pd;
 }
 
