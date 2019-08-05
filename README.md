@@ -18,7 +18,7 @@
 
 * Application is CMake-based and could be compiled on any platform that have CMake 3.0+ installed
 * Just create build directory in the project catalog `mkdir build`, enter `cd build` it and execute `cmake ..`
-* Boost required for compilation, we use console-based progress-bar to make entropy calculation look pretty
+* Boost required for compilation, we use console-based progress-bar to make entropy calculation look pretty, Boost Test for unit-testing etc.
 * I had to provide `std::codecvt<std::uint8_t>` specialization for binary file streams. MS compiler provide one, but GCC does not (and doesn't have to as it's not a C++ Standard requirement)
 * Specific installation does not required, application is portable
 
