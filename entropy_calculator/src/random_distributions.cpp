@@ -30,6 +30,8 @@ std::vector<uint8_t> entropy::generate_normal_distribution(size_t sequence_size,
     auto gen = std::bind(distribution, generator);
 
     random_sequence.resize(sequence_size);
-    std::generate(random_sequence.begin(), random_sequence.end(), gen);
+    std::generate(random_sequence.begin(), random_sequence.end(), [&gen]() { 
+        return static_cast<uint8_t>(gen() * 255); 
+    });
     return std::move(random_sequence);
 }
