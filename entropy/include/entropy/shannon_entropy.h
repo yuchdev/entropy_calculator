@@ -95,9 +95,6 @@ public:
     /// @brief Min possible file size assuming max theoretical compression efficiency in bytes
     size_t min_compressed_size(double entropy, size_t sequence_size) const;
 
-    /// @brief File size using stat, 0 for non-existent file
-    static size_t get_file_size(const std::string& file_path);
-
     /// @brief Provide readable properties of the information sequence
     std::string get_information_description(InformationEntropyEstimation ent) const;
 

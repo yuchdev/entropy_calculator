@@ -1,12 +1,13 @@
 #include <entropy/shannon_entropy.h>
+#include <boost/filesystem.hpp>
 #include <fstream>
 #include <cassert>
 
 using namespace entropy;
 using namespace std;
+namespace fs = boost::filesystem;
 
 bool entropy::ShannonEncryptionChecker::interrupt_all_ = false;
-
 bool entropy::ShannonEncryptionChecker::load_uint8_codecvt_;
 
 std::map<ShannonEncryptionChecker::InformationEntropyEstimation, std::string> 
@@ -23,14 +24,6 @@ ShannonEncryptionChecker::ShannonEncryptionChecker()
         std::locale::global(std::locale(std::locale(), new std::codecvt<uint8_t, char, std::mbstate_t>));
         load_uint8_codecvt_ = true;
     }
-}
-
-// static
-size_t entropy::ShannonEncryptionChecker::get_file_size(const std::string& file_path)
-{
-    struct stat stat_buf {};
-    stat(file_path.c_str(), &stat_buf);
-    return stat_buf.st_size;
 }
 
 void ShannonEncryptionChecker::interrupt()
@@ -54,7 +47,7 @@ size_t ShannonEncryptionChecker::min_compressed_size(double entropy, size_t sequ
 
 double entropy::ShannonEncryptionChecker::get_file_entropy(const std::string& file_path) const
 {
-    uintmax_t file_size = get_file_size(file_path);
+    uintmax_t file_size = fs::file_size(file_path);
     std::vector<double> byte_probabilities = read_file_probabilities(file_path, file_size);
     return shannon_entropy(byte_probabilities.begin(), byte_probabilities.end());
 }

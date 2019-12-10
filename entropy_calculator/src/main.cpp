@@ -2,6 +2,7 @@
 #include <entropy_calculator/random_distributions.h>
 #include <entropy_calculator/command_line_parser.h>
 
+#include <boost/filesystem.hpp>
 #include <boost/progress.hpp>
 #include <iostream>
 #include <string>
@@ -15,6 +16,7 @@
 
 using namespace std;
 using namespace entropy;
+namespace fs = boost::filesystem;
 using binary_file = std::basic_ifstream<uint8_t, std::char_traits<uint8_t>>;
 
 struct ProgressCallback
@@ -93,7 +95,7 @@ void calculate_file_entropy(const std::string& filename)
 
     ShannonEncryptionChecker shannon;
     
-    size_t file_size = ShannonEncryptionChecker::get_file_size(filename);
+    uintmax_t file_size = fs::file_size(filename);
 
     get_progress().init(file_size);
     shannon.set_callback(&progress_callback);
