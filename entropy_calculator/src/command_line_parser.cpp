@@ -9,7 +9,7 @@ using namespace entropy;
 namespace po = boost::program_options;
 using std::string;
 
-CommandLineParams::CommandLineParams() : cmd_options_description("Shannon-entropy utility console has the following options:")
+CommandLineParams::CommandLineParams() : cmd_options_description("Shannon-entropy utility console has the following options")
 {}
 
 void CommandLineParams::read_params(int argc, char* argv[])
