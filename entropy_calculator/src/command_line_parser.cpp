@@ -18,13 +18,10 @@ void CommandLineParams::read_params(int argc, char* argv[])
         ("help,h", "Print usage")
         ("version,v", "Print version")
         ("from-file,f", po::value<string>(&_from_file), "Get a file as an information source (default option)")
-        ("random-distribution,r", po::value<string>(&_random_distribution),
-            "Get a random distribution as information source [linear|normal]")
-        ("sequence-size,s", po::value<size_t>(&_sequence_size),
-            "Size of the generated sequence (only if --random-distribution selected)")
+        ("random-distribution,r", po::value<string>(&_random_distribution), "Get a random distribution as information source [linear|normal]")
+        ("sequence-size,s", po::value<size_t>(&_sequence_size), "Size of the generated sequence (only if --random-distribution selected)")
         ("mean,m", po::value<double>(&_mean)->default_value(0.), "Mean for distribution (only for normal)")
-        ("std-dev,d", po::value<double>(&_stddev)->default_value(1.0), "Standard deviation for distribution (only for normal)")
-        ;
+        ("std-dev,d", po::value<double>(&_stddev)->default_value(1.0), "Standard deviation for distribution (only for normal)");
 
     // command line params processing
     po::variables_map cmd_variables_map;
