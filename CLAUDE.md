@@ -30,11 +30,8 @@ Two CMake targets, wired in the top-level `CMakeLists.txt`:
 
 `uint8_codecvt.h` provides a `std::codecvt<uint8_t>` specialisation so `basic_ifstream<uint8_t>` can read binary files. MSVC ships one; GCC/libc++ do not. Anything reading files as `uint8_t` streams depends on it being installed first (`ShannonEncryptionChecker`'s constructor handles this via `load_uint8_codecvt_`).
 
-## Known issues in the existing code
+## Notes
 
-Verify before relying on these:
-
-- `main.cpp`: the `"normal"` branch calls `generate_uniform_distribution` and the `"linear"` branch calls `generate_normal_distribution`, so the names are swapped relative to the CLI help. The first `if` is not chained with `else if`, so `normal` also falls into the final `else` and calls `usage_exit()`.
-- `CommandLineParams::mean()` returns `_help` instead of `_mean`.
-- The callback overload of `shannon_entropy` uses `assert` without including `<cassert>` and never invokes the callback.
-- The version string `0.0.3` is hardcoded in `main.cpp`.
+- The callback overload of `shannon_entropy` calls `callback.init(n)` once and `callback(++counter)` per item, so the callback object needs both `init(uintmax_t)` and `operator()(uintmax_t)`. Nothing in the repo uses this overload; the CLI uses `ShannonEncryptionChecker::set_callback` instead.
+- The version string lives in the `VERSION` constant in `main.cpp`.
+- Several files are committed with CRLF line endings while `core.autocrlf=true`, so plain `git diff` can show whole-file changes; use `git diff --ignore-space-at-eol`.

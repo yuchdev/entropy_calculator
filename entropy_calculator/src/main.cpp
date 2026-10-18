@@ -17,6 +17,10 @@
 using namespace std;
 using namespace entropy;
 namespace fs = boost::filesystem;
+
+namespace {
+constexpr const char* VERSION = "0.0.3";
+}
 using binary_file = std::basic_ifstream<uint8_t, std::char_traits<uint8_t>>;
 
 struct ProgressCallback
@@ -84,7 +88,7 @@ void usage_exit()
 
 void print_version_exit()
 {
-    cout << "0.0.3" << endl;
+    cout << VERSION << endl;
     exit(EXIT_SUCCESS);
 }
 
@@ -158,12 +162,12 @@ int main(int argc, char* argv[]) {
 
         if (!cmd_line_params.random_distribution().empty()) {
             std::string distr = cmd_line_params.random_distribution();
-            if (distr == "normal") {
+            if (distr == "linear") {
                 size_t sequence_size = cmd_line_params.sequence_size();
                 std::vector<uint8_t> random_sequence = generate_uniform_distribution(sequence_size);
                 calculate_sequence_entropy(random_sequence);
             }
-            if (distr == "linear") {
+            else if (distr == "normal") {
                 size_t sequence_size = cmd_line_params.sequence_size();
                 double mean = cmd_line_params.mean();
                 double std_dev = cmd_line_params.std_deviation();

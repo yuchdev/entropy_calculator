@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <cmath>
+#include <cassert>
 
 
 namespace entropy {
@@ -43,8 +44,9 @@ double shannon_entropy(T first, T last, CallbackObj& callback)
     uintmax_t data_size = std::distance(first, last);
     callback.init(data_size);
 
-    std::for_each(first, last, [&entropy, &frequencies_count, &callback](auto item) mutable {
+    std::for_each(first, last, [&entropy, &frequencies_count, &callback, &counter](auto item) mutable {
 
+        callback(++counter);
         if (0. == item) return;
         double fp_item = static_cast<double>(item);
         entropy += fp_item * log2(fp_item);
