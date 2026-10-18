@@ -15,11 +15,13 @@ mkdir build && cd build && cmake .. && cmake --build .
 - Requires CMake 3.12+, Boost >= 1.61 (headers plus `program_options` and `filesystem` for the executable) and Threads.
 - Boost location: set `MY_BOOST_DIR` (becomes `BOOST_ROOT`); on Windows `WINDOWS_BOOST_DIR` is mapped to it. Boost is linked statically (`Boost_USE_STATIC_LIBS ON`).
 - Clang builds force `-stdlib=libc++`.
-- There are no tests or lint configuration in the repo, despite the README mentioning Boost Test.
+- There are no tests or lint configuration in the repo, despite the README mentioning Boost Test, so there is no single-test command. Verify changes by running the executable (e.g. `-f` on a known file, or compare against `script/file_entropy.py`).
 
 Run: `build/entropy_calculator/entropy_calculator -f <file>` or `-r <linear|normal> -s <size> [-m mean] [-d stddev]`.
 
 ## Architecture
+
+Source layout: each target keeps public headers in `include/<target>/` and sources in `src/` (e.g. `entropy/include/entropy/shannon_entropy.h`, `entropy_calculator/src/main.cpp`).
 
 Two CMake targets, wired in the top-level `CMakeLists.txt`:
 
