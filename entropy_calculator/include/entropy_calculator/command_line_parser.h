@@ -42,7 +42,7 @@ public:
     }
 
     double mean() const {
-        return _help;
+        return _mean;
     }
 
     double std_deviation() const {

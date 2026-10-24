@@ -15,11 +15,13 @@ mkdir build && cd build && cmake .. && cmake --build .
 - Requires CMake 3.12+, Boost >= 1.61 (headers plus `program_options` and `filesystem` for the executable) and Threads.
 - Boost location: set `MY_BOOST_DIR` (becomes `BOOST_ROOT`); on Windows `WINDOWS_BOOST_DIR` is mapped to it. Boost is linked statically (`Boost_USE_STATIC_LIBS ON`).
 - Clang builds force `-stdlib=libc++`.
-- There are no tests or lint configuration in the repo, despite the README mentioning Boost Test.
+- There are no tests or lint configuration in the repo, despite the README mentioning Boost Test, so there is no single-test command. Verify changes by running the executable (e.g. `-f` on a known file, or compare against `script/file_entropy.py`).
 
 Run: `build/entropy_calculator/entropy_calculator -f <file>` or `-r <linear|normal> -s <size> [-m mean] [-d stddev]`.
 
 ## Architecture
+
+Source layout: each target keeps public headers in `include/<target>/` and sources in `src/` (e.g. `entropy/include/entropy/shannon_entropy.h`, `entropy_calculator/src/main.cpp`).
 
 Two CMake targets, wired in the top-level `CMakeLists.txt`:
 
@@ -28,11 +30,8 @@ Two CMake targets, wired in the top-level `CMakeLists.txt`:
 
 `uint8_codecvt.h` provides a `std::codecvt<uint8_t>` specialisation so `basic_ifstream<uint8_t>` can read binary files. MSVC ships one; GCC/libc++ do not. Anything reading files as `uint8_t` streams depends on it being installed first (`ShannonEncryptionChecker`'s constructor handles this via `load_uint8_codecvt_`).
 
-## Known issues in the existing code
+## Notes
 
-Verify before relying on these:
-
-- `main.cpp`: the `"normal"` branch calls `generate_uniform_distribution` and the `"linear"` branch calls `generate_normal_distribution`, so the names are swapped relative to the CLI help. The first `if` is not chained with `else if`, so `normal` also falls into the final `else` and calls `usage_exit()`.
-- `CommandLineParams::mean()` returns `_help` instead of `_mean`.
-- The callback overload of `shannon_entropy` uses `assert` without including `<cassert>` and never invokes the callback.
-- The version string `0.0.3` is hardcoded in `main.cpp`.
+- The callback overload of `shannon_entropy` calls `callback.init(n)` once and `callback(++counter)` per item, so the callback object needs both `init(uintmax_t)` and `operator()(uintmax_t)`. Nothing in the repo uses this overload; the CLI uses `ShannonEncryptionChecker::set_callback` instead.
+- The version string lives in the `VERSION` constant in `main.cpp`.
+- Several files are committed with CRLF line endings while `core.autocrlf=true`, so plain `git diff` can show whole-file changes; use `git diff --ignore-space-at-eol`.
