@@ -1,0 +1,140 @@
+# ---------------------------------------------------------------------------
+# Build output (CMake / C++)
+# ---------------------------------------------------------------------------
+build/
+build-*/
+cmake-build-*/
+out/
+bin/
+[Bb]in/
+[Oo]bj/
+
+# Compiled object files
+*.o
+*.obj
+*.lo
+*.slo
+*.ko
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Libraries
+*.a
+*.la
+*.lai
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug / symbol files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+*.ilk
+*.exp
+*.map
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Packaging / distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+wheels/
+
+# Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test / coverage / type-checker caches
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.ruff_cache/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Editors / IDEs
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.spyproject/
+.spyderproject/
+*.sublime-workspace
+*.sublime-project
+
+# ---------------------------------------------------------------------------
+# OS cruft
+# ---------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------------------------------------------------------------------------
+# General temporary / backup files
+# ---------------------------------------------------------------------------
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.log
+*.pid
+*.seed
+*.pid.lock
+.cache/
+
+# ---------------------------------------------------------------------------
+# Project-local tooling (Claude Code) caches and logs
+# ---------------------------------------------------------------------------
+.claude/**/__pycache__/
+.claude/logs/
+.claude/**/*.log
